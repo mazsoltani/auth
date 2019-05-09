@@ -1,4 +1,3 @@
-const createError = require('http-errors');
 const express = require('express');
 const logger = require('morgan');
 
@@ -23,16 +22,16 @@ app.use('/auth/v1/', indexRouter);
 // middleware responsible for checking if token exists (in needed routes)
 // routers that do not require token should be declared before this middleware
 app.use(function(req, res, next){
-  let authRequired = true;
+  let authRequired = false;
 
   // check if the request is excluded from checking
-  config.noAuthenticationList.forEach(({method, url}) => {
-    if(method === req.method && url === req.path){
-      next();
+  config.AuthenticationList.forEach(({method, url}) => {
+    if(method === req.method && url === req.path && !req.headers.authorization){
+      authRequired = true;
     }
   });
 
-  if (!req.headers.authorization){
+  if (authRequired){
     return res.status(rm.noCredentials.code).json(rm.noCredentials.msg);
   }
   next();
@@ -42,7 +41,7 @@ app.use('/auth/v1/user', userRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
-  next(createError(404));
+  res.sendStatus(404);
 });
 
 // error handler

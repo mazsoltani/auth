@@ -1,13 +1,25 @@
 {
     "dbURL": "mongodb://localhost:27017/auth"
-    ,"noAuthenticationList": [
+    ,"AuthenticationList": [
         {
-            "method": "POST"
-            ,"url": "/auth/v1/user/register"
+            "method": "PUT"
+            ,"url": "/auth/v1/user/changePassword"
         }
         ,{
-            "method": "POST"
-            ,"url": "/auth/v1/user/login"
+            "method": "GET"
+            ,"url": "/auth/v1/validate/token"
+        }
+        ,{
+            "method": "DELETE"
+            ,"url": "/auth/v1/user/logout"
+        }
+        ,{
+            "method": "GET"
+            ,"url": "/auth/v1/user/role"
+        }
+        ,{
+            "method": "PUT"
+            ,"url": "/auth/v1/user/role"
         }
     ]
 }
