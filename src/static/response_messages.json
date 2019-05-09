@@ -1,0 +1,98 @@
+{
+    "heartbeat": {
+        "code": 200
+        ,"msg": {
+            "message": "Authentication Service is up and running!"
+        }
+    }
+    ,"noCredentials": {
+        "code": 403
+        ,"msg": {
+            "message": "No credentials sent!"
+        }
+    }
+    ,"invalidParameters": {
+        "code": 400
+        ,"msg": {
+            "message": "Invalid parameters!"
+        }
+    }
+    ,"emailExists": {
+        "code": 409
+        ,"msg": {
+            "message": "This E-mail already exists!"
+        }
+    }
+    ,"registerSuccessful": {
+        "code": 201
+        ,"msg": {
+            "message": "Registered successfully!"
+        }
+    }
+    ,"invalidUserPass": {
+        "code": 401
+        ,"msg": {
+            "message": "Invalid Username or Password!"
+        }
+    }
+    ,"loggedInSuccess": {
+        "code": 200
+        ,"msg": {
+            "message": "Successfully logged in!"
+        }
+    }
+    ,"tooManyRequests": {
+        "code": 429
+        ,"msg": {
+            "message": "Too many login requests! Try again later..."
+        }
+    }
+    ,"notLoggedIn": {
+        "code": 401
+        ,"msg": {
+            "message": "Sorry! You are not logged in!"
+        }
+    }
+    ,"sessionInvalid": {
+        "code": 403
+        ,"msg": {
+            "message": "Your session has expired / is invalid!"
+        }
+    }
+    ,"loggedIn": {
+        "code": 200
+        ,"msg": {
+            "message": "Yes! You are logged in!"
+        }
+    }
+    ,"emailNotFound": {
+        "code": 404
+        ,"msg": {
+            "message": "E-mail not found!"
+        }
+    }
+    ,"notAcceptableRole": {
+        "code": 406
+        ,"msg": {
+            "message": "Acceptable Roles are 'user' and 'admin'!"
+        }
+    }
+    ,"notAuthorized": {
+        "code": 401
+        ,"msg": {
+            "message": "You must be an admin to set role!"
+        }
+    }
+    ,"changeRoleSuccess": {
+        "code": 200
+        ,"msg": {
+            "message": "Changed role successfully!"
+        }
+    }
+    ,"loggedOutSuccess": {
+        "code": 200
+        ,"msg": {
+            "message": "Successfully logged out!"
+        }
+    }
+}

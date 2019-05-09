@@ -1,0 +1,14 @@
+{
+    "adminName": "admin"
+    ,"adminPassword": "admin"
+    ,"adminEmail": "admin@fumelect.com"
+    ,"adminProfile": "noimage.jpg"
+    ,"adminRole": "admin"
+    ,"userRole": "user"
+    ,"noProfile": "noimage.jpg"
+    ,"tokenName": "token"
+    ,"role": "role"
+    ,"email": "email"
+    ,"message": "message"
+    ,"duplicateError": 11000
+}

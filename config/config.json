@@ -1,0 +1,13 @@
+{
+    "dbURL": "mongodb://localhost:27017/auth"
+    ,"noAuthenticationList": [
+        {
+            "method": "POST"
+            ,"url": "/auth/v1/user/register"
+        }
+        ,{
+            "method": "POST"
+            ,"url": "/auth/v1/user/login"
+        }
+    ]
+}

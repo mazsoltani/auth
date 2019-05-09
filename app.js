@@ -1,64 +1,59 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const createError = require('http-errors');
+const express = require('express');
+const logger = require('morgan');
 
-var dbConfig = require('./db/config.json');
-var mongo = require('mongodb');
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
+const config = require('./config/config.json');
+mongoose.connect(config.dbURL);
+const adminUser = require('./scripts/adminUser');
 
-var db = mongoose.connect(dbConfig.DB);
+const indexRouter = require('./src/routes/index');
+const userRouter = require('./src/routes/users');
 
-//var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const rm = require('./src/static/response_messages.json');
 
-var app = express();
-
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+const app = express();
 
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 
-//app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/auth/v1/', indexRouter);
+
+// middleware responsible for checking if token exists (in needed routes)
+// routers that do not require token should be declared before this middleware
+app.use(function(req, res, next){
+  let authRequired = true;
+
+  // check if the request is excluded from checking
+  config.noAuthenticationList.forEach(({method, url}) => {
+    if(method === req.method && url === req.path){
+      next();
+    }
+  });
+
+  if (!req.headers.authorization){
+    return res.status(rm.noCredentials.code).json(rm.noCredentials.msg);
+  }
+  next();
+});
+
+app.use('/auth/v1/user', userRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use((req, res, next) => {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use((err, req, res) => {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+  res.sendStatus(err.status || 500);
 });
 
-var User = require('./models/user');
-
-var newUser = new User({
-  name: 'admin',
-  email: 'admin@fumelect.com',
-  password: 'admin',
-  profileimage: 'noimage.jpg',
-  role: 'admin'
-});
-
-User.createUser(newUser, function(err, user){
-  if(err)
-  {
-    throw err;
-  }
-});
+// Create admin user if not already created!
+adminUser.create();
 
 module.exports = app;

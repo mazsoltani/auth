@@ -1,2 +1,401 @@
-=== FUM-Elect Authentication Microservice ===
+== FUM-Elect Authentication Microservice ==
 This is a key component from the https://github.com/SayidHosseini/FUM-Elect[FUM-Elect] project.
+
+{empty} +
+
+== Heartbeat ==
+This is used to check if the service is up.
+
+++++
+
+<table>
+    <tbody>
+        <tr>
+            <th>HTTP Method</th>
+            <td>GET</td>
+        </tr>
+        <tr>
+            <th>URL</th>
+            <td>/auth/v1/heartbeat</td>
+        </tr>
+        <tr>
+            <th>Request Body</th>
+            <td>empty</td>
+        </tr>
+        <tr>
+            <th>Response OK</th>
+            <td>
+                <strong>200</strong> OK
+            </td>
+        </tr>
+        <tr>
+            <th>Response ERROR</th>
+            <td>no response</td>
+        </tr>
+    </tbody>
+</table>
+
+++++
+
+{empty} +
+
+== Register User ==
+This is used to register a new user.
+
+++++
+
+<table>
+    <tbody>
+        <tr>
+            <th>HTTP Method</th>
+            <td>POST</td>
+        </tr>
+        <tr>
+            <th>URL</th>
+            <td>/auth/v1/user/register</td>
+        </tr>
+        <tr>
+            <th>Request Body</th>
+            <td>
+                <p> </p>
+<pre>
+{
+    "email": "A VALID EMAIL ADDRESS",
+    "password": "A VALID PASSWORD"
+}
+</pre>
+            </td>
+        </tr>
+        <tr>
+            <th>Response OK</th>
+            <td>
+                <strong>201</strong> Created
+            </td>
+        </tr>
+        <tr>
+            <th>Response ERROR</th>
+            <td>
+                <strong>400</strong> Invalid Parameters
+                <br />
+                <strong>409</strong> Email Already Exists
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+++++
+
+{empty} +
+
+== Login ==
+This is used to login. It returns a `JWT` token which is sent in request body, when authentication is required.
+
+++++
+
+<table>
+    <tbody>
+        <tr>
+            <th>HTTP Method</th>
+            <td>POST</td>
+        </tr>
+        <tr>
+            <th>URL</th>
+            <td>/auth/v1/user/login</td>
+        </tr>
+        <tr>
+            <th>Request Body</th>
+            <td>
+                <p> </p>
+<pre>
+{
+    "email": "A VALID EMAIL ADDRESS",
+    "password": "A VALID PASSWORD"
+}
+</pre>
+            </td>
+        </tr>
+        <tr>
+            <th>Response OK</th>
+            <td>
+                <strong>200</strong> OK
+            </td>
+        </tr>
+        <tr>
+            <th>Response ERROR</th>
+            <td>
+                <strong>400</strong> Invalid Parameters
+                <br />
+                <strong>401</strong> Invalid Username or Password
+                <br />
+                <strong>429</strong> Too Many Requests
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+++++
+
+{empty} +
+
+== Validate Token ==
+This is to check if the user is logged in. The user needs to login first to make this request.
+
+++++
+
+<table>
+    <tbody>
+        <tr>
+            <th>HTTP Method</th>
+            <td>GET</td>
+        </tr>
+        <tr>
+            <th>URL</th>
+            <td>/auth/v1/validate/token</td>
+        </tr>
+        <tr>
+            <th>Request Body</th>
+            <td>
+                <p> </p>
+<pre>
+{
+    "token": "A VALID JWT TOKEN",
+}
+</pre>
+            </td>
+        </tr>
+        <tr>
+            <th>Response OK</th>
+            <td>
+                <strong>200</strong> OK
+            </td>
+        </tr>
+        <tr>
+            <th>Response ERROR</th>
+            <td>
+                <strong>400</strong> Invalid Parameters
+                <br />
+                <strong>401</strong> Invalid Token
+                <br />
+                <strong>403</strong> Invalid / Expired Session
+                <br />
+                <strong>429</strong> Too Many Requests
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+++++
+
+{empty} +
+
+== Change Password ==
+This is used to change user password. The user needs to login first to make this request.
+
+++++
+
+<table>
+    <tbody>
+        <tr>
+            <th>HTTP Method</th>
+            <td>PUT</td>
+        </tr>
+        <tr>
+            <th>URL</th>
+            <td>/auth/v1/user/changePassword</td>
+        </tr>
+        <tr>
+            <th>Request Body</th>
+            <td>
+                <p> </p>
+<pre>
+{
+    "token": "A VALID JWT TOKEN",
+    "password": "CURRENT PASSWORD",
+    "newPassword": "A NEW VALID PASSWORD"
+}
+</pre>
+            </td>
+        </tr>
+        <tr>
+            <th>Response OK</th>
+            <td>
+                <strong>200</strong> OK
+            </td>
+        </tr>
+        <tr>
+            <th>Response ERROR</th>
+            <td>
+                <strong>400</strong> Invalid Parameters
+                <br />
+                <strong>401</strong> Invalid Token / Not Authorized
+                <br />
+                <strong>403</strong> Invalid / Expired Session
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+++++
+
+{empty} +
+
+== Get Role ==
+This is used to get the current role of a user. The user needs to login first to make this request. Both `admin` and `user` roles can do this.
+
+++++
+
+<table>
+    <tbody>
+        <tr>
+            <th>HTTP Method</th>
+            <td>GET</td>
+        </tr>
+        <tr>
+            <th>URL</th>
+            <td>/auth/v1/user/role</td>
+        </tr>
+        <tr>
+            <th>Request Body</th>
+            <td>
+                <p> </p>
+<pre>
+{
+    "token": "A VALID JWT TOKEN",
+    "email": "A VALID AND REGISTERED EMAIL ADDRESS"
+}
+</pre>
+            </td>
+        </tr>
+        <tr>
+            <th>Response OK</th>
+            <td>
+                <strong>200</strong> OK
+                <p> </p>
+<pre>
+{
+    "email": "THE REQUESTED EMAIL ADDRESS",
+    "role": "admin" / "user"
+}
+</pre>
+            </td>
+        </tr>
+        <tr>
+            <th>Response ERROR</th>
+            <td>
+                <strong>400</strong> Invalid Parameters
+                <br />
+                <strong>401</strong> Invalid Token
+                <br />
+                <strong>403</strong> Invalid / Expired Session
+                <br />
+                <strong>404</strong> Email Not Found
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+++++
+
+{empty} +
+
+== Change Role ==
+This is used to change the current role of a user. The user needs to login first to make this request. Only `admin` role users can do this.
+
+++++
+
+<table>
+    <tbody>
+        <tr>
+            <th>HTTP Method</th>
+            <td>PUT</td>
+        </tr>
+        <tr>
+            <th>URL</th>
+            <td>/auth/v1/user/role</td>
+        </tr>
+        <tr>
+            <th>Request Body</th>
+            <td>
+                <p> </p>
+<pre>
+{
+    "token": "A VALID JWT TOKEN",
+    "email": "A VALID AND REGISTERED EMAIL ADDRESS",
+    "role": "admin" / "user"
+}
+</pre>
+            </td>
+        </tr>
+        <tr>
+            <th>Response OK</th>
+            <td>
+                <strong>200</strong> OK
+            </td>
+        </tr>
+        <tr>
+            <th>Response ERROR</th>
+            <td>
+                <strong>400</strong> Invalid Parameters
+                <br />
+                <strong>401</strong> Invalid Token / Not Authorized
+                <br />
+                <strong>403</strong> Invalid / Expired Session
+                <br />
+                <strong>404</strong> Email Not Found
+                <br />
+                <strong>406</strong> Not Acceptable
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+++++
+
+{empty} +
+
+== Logout ==
+This is used to logout. The user needs to login first to make this request. The user's token becomes invalid after this.
+
+++++
+
+<table>
+    <tbody>
+        <tr>
+            <th>HTTP Method</th>
+            <td>DELETE</td>
+        </tr>
+        <tr>
+            <th>URL</th>
+            <td>/auth/v1/user/logout</td>
+        </tr>
+        <tr>
+            <th>Request Body</th>
+            <td>
+                <p> </p>
+<pre>
+{
+    "token": "A VALID JWT TOKEN",
+}
+</pre>
+            </td>
+        </tr>
+        <tr>
+            <th>Response OK</th>
+            <td>
+                <strong>200</strong> OK
+            </td>
+        </tr>
+        <tr>
+            <th>Response ERROR</th>
+            <td>
+                <strong>400</strong> Invalid Parameters
+                <br />
+                <strong>401</strong> Invalid Token / Not Authorized
+                <br />
+                <strong>403</strong> Invalid / Expired Session
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+++++
