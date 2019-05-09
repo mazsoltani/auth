@@ -130,7 +130,7 @@ router.put('/role', (req, res, next) => {
             if(!user){
                 return res.status(rm.emailNotFound.code).json(rm.emailNotFound.msg);
             }
-            if(role !== sn.adminRole && role !== sn.userRole){
+            if(role !== sn.adminRole && role !== sn.userRole && role !== sn.guestRole){
                 return res.status(rm.notAcceptableRole.code).json(rm.notAcceptableRole.msg);
             }
             if(user.role != sn.adminRole){ // check if the requester is actually an admin
