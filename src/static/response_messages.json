@@ -65,6 +65,18 @@
             "message": "Yes! You are logged in!"
         }
     }
+    ,"invalidPassword": {
+        "code": 403
+        ,"msg": {
+            "message": "Invalid password!"
+        }
+    }
+    ,"changePasswordSuccess": {
+        "code": 200
+        ,"msg": {
+            "message": "Changed password successfully!"
+        }
+    }
     ,"emailNotFound": {
         "code": 404
         ,"msg": {

@@ -22,13 +22,14 @@ router.post('/register', (req, res, next) => {
         ,role: sn.userRole
     });
 
-    User.createUser(newUser, (err) => {
-        if(err){
+    User.createUser(newUser, (err, usr) => {
+        if(err || !usr){
             if(err.code === sn.duplicateError){
                 return res.status(rm.emailExists.code).json(rm.emailExists.msg);
             }
             return next(err);
         }
+
         res.status(rm.registerSuccessful.code).json(rm.registerSuccessful.msg);
     });
 });
@@ -85,6 +86,42 @@ router.get('/verify/loggedIn', (req, res, next) => {
 
     tokenResponse(token, res, next, () => {
         res.status(rm.loggedIn.code).json(rm.loggedIn.msg);
+    });
+});
+
+router.put('/changePassword', (req, res, next) => {
+    const { password, newPassword } = req.body;
+    const token = req.get('authorization').split(' ')[1]; // Extract the token from Bearer
+    const email = jwt.decode(token).payload.email;
+
+    if(!password || !newPassword){
+        return res.status(rm.invalidParameters.code).json(rm.invalidParameters.msg);
+    }
+
+    User.getUserByEmail(email, (err, user) => {
+        if(err){
+            return next(err);
+        }
+        if(!user){
+            return res.status(rm.emailNotFound.code).json(rm.emailNotFound.msg);
+        }
+
+        User.comparePassword(password, user.password, (err) => {
+            if(err){
+                return next(err);
+            }
+            if(!isMatched){
+                return res.status(rm.invalidPassword.code).json(rm.invalidPassword.msg);
+            }
+
+            User.changePassword(email, password, newPassword, (err, usr) => {
+                if(err || !usr){
+                    return next(err);
+                }
+
+                return res.status(rm.changePasswordSuccess.code).json(rm.changePasswordSuccess.msg);
+            });
+        });
     });
 });
 
