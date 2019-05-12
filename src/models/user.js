@@ -74,7 +74,7 @@ module.exports.updateRole = (email, role, callback) => {
     });
 };
 
-module.exports.changePassword = (email, password, newPassword, callback) => {
+module.exports.changePassword = (email, newPassword, callback) => {
     User.getUserByEmail(email, (err, user) => {
         if(err){
             callback(err, null)

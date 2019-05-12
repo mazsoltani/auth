@@ -1,5 +1,5 @@
 {
-    "dbURL": "mongodb://localhost:27017/auth"
+    "dbURL": "mongodb://mongo:27017/auth"
     ,"AuthenticationList": [
         {
             "method": "PUT"

@@ -114,7 +114,7 @@ router.put('/changePassword', (req, res, next) => {
                 return res.status(rm.invalidPassword.code).json(rm.invalidPassword.msg);
             }
 
-            User.changePassword(email, password, newPassword, (err, usr) => {
+            User.changePassword(email, newPassword, (err, usr) => {
                 if(err || !usr){
                     return next(err);
                 }
