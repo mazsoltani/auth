@@ -7,7 +7,7 @@ const tokenResponse = require('./utils/parseToken').tokenResponse;
 
 router.get('/token', (req, res, next) => {
 
-    const { token } = req.body;
+    const { token } = req.query;
 
     if (!token) {
         return res.status(rm.invalidParameters.code).json(rm.invalidParameters.msg);

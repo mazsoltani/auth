@@ -78,19 +78,6 @@ router.post('/login', (req, res, next) => {
         });
     });
 });
-
-router.get('/verify/loggedIn', (req, res, next) => {
-    const { token } = req.body;
-
-    if(!token){
-        return res.status(rm.invalidParameters.code).json(rm.invalidParameters.msg);
-    }
-
-    tokenResponse(token, res, next, () => {
-        res.status(rm.loggedIn.code).json(rm.loggedIn.msg);
-    });
-});
-
 router.put('/changePassword', (req, res, next) => {
     const { password, newPassword } = req.body;
     const token = req.get('authorization').split(' ')[1]; // Extract the token from Bearer
@@ -128,7 +115,7 @@ router.put('/changePassword', (req, res, next) => {
 });
 
 router.get('/role', (req, res, next) => {
-    const { email } = req.body;
+    const { email } = req.query;
     const token = req.get('authorization').split(' ')[1]; // Extract the token from Bearer
 
     if(!email){
