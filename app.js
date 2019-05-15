@@ -54,7 +54,7 @@ app.use((err, req, res) => {
   res.sendStatus(err.status || 500);
 });
 
-// Create admin user if not already created!
+// Create admin user if not already created
 adminUser.create();
 
 module.exports = app;

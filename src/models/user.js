@@ -25,10 +25,20 @@ const User = module.exports = mongoose.model('User', UserSchema);
 
 module.exports.createUser = (newUser, callback) => {
     bcrypt.genSalt(10, (err, salt) => {
-        bcrypt.hash(newUser.password, salt, (err, hash) => {
-            newUser.password = hash;
-            newUser.save(callback);
-        });
+        if(err){
+            callback(err, null);
+        }
+        else{
+            bcrypt.hash(newUser.password, salt, (err, hash) => {
+                if(err){
+                    callback(err, null);
+                }
+                else{
+                    newUser.password = hash;
+                    newUser.save(callback);
+                }
+            });
+        }
     });
 };
 
@@ -60,6 +70,32 @@ module.exports.updateRole = (email, role, callback) => {
         else{
             user.role = role;
             user.save(callback);
+        }
+    });
+};
+
+module.exports.changePassword = (email, newPassword, callback) => {
+    User.getUserByEmail(email, (err, user) => {
+        if(err){
+            callback(err, null)
+        }
+        else{
+            bcrypt.genSalt(10, (err, salt) => {
+                if(err){
+                    callback(err, null);
+                }
+                else{
+                    bcrypt.hash(newPassword, salt, (err, hash) => {
+                        if(err){
+                            callback(err, null);
+                        }
+                        else{
+                            user.password = hash;
+                            user.save(callback);
+                        }
+                    });
+                }
+            });
         }
     });
 };
