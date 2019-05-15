@@ -8,6 +8,7 @@ const adminUser = require('./scripts/adminUser');
 
 const indexRouter = require('./src/routes/index');
 const userRouter = require('./src/routes/users');
+const validateRouter = require('./src/routes/validate');
 
 const rm = require('./src/static/response_messages.json');
 
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use('/auth/v1/', indexRouter);
+app.use('/auth/v1/validate', validateRouter);
 
 // middleware responsible for checking if token exists (in needed routes)
 // routers that do not require token should be declared before this middleware

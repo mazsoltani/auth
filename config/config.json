@@ -6,10 +6,6 @@
             ,"url": "/auth/v1/user/changePassword"
         }
         ,{
-            "method": "GET"
-            ,"url": "/auth/v1/validate/token"
-        }
-        ,{
             "method": "DELETE"
             ,"url": "/auth/v1/user/logout"
         }
