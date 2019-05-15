@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const config = require('../../config/config.json');
 const bcrypt = require('bcryptjs');
+const Joi = require('@hapi/joi');
+const sn = require('../static/names.json');
 
 mongoose.connect(config.dbURL);
 
@@ -10,6 +12,13 @@ const UserSchema = mongoose.Schema({
         ,index: true
         ,required: true
         ,unique: true
+        ,lowercase: true
+        ,validate: {
+            validator: function(value) {
+                const { error } = Joi.validate(value, Joi.string().email({ minDomainSegments: 2}));
+                return error ? false : true;
+            }
+        }
     }
     ,password: {
         type: String
@@ -18,6 +27,8 @@ const UserSchema = mongoose.Schema({
     ,role: {
         type: String
         ,required: true
+        ,enum: [sn.adminRole, sn.userRole, sn.guestRole]
+        ,lowercase: true
     }
 });
 

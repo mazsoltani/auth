@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
+const Joi = require('@hapi/joi');
+const schemas = require('./utils/validationSchema');
+
 const User = require('../models/user');
 const LoggedIn = require('../models/loggedIn');
 
@@ -12,11 +15,14 @@ const sn = require('./../static/names.json');
 const tokenResponse = require('./utils/parseToken').tokenResponse;
 
 router.post('/register', (req, res, next) => {
-    const { email, password } = req.body;
 
-    if(!email || !password){
+    const { error } = Joi.validate(req.body,schemas.register);
+
+    if (error) {
         return res.status(rm.invalidParameters.code).json(rm.invalidParameters.msg);
     }
+
+    const { email, password } = req.body;
 
     let newUser = new User({
         email: email
@@ -37,11 +43,14 @@ router.post('/register', (req, res, next) => {
 });
 
 router.post('/login', (req, res, next) => {
-    const { email, password } = req.body;
+    
+    const { error } = Joi.validate(req.body, schemas.login);
 
-    if(!email || !password){
+    if (error) {
         return res.status(rm.invalidParameters.code).json(rm.invalidParameters.msg);
     }
+
+    const { email, password } = req.body;
 
     User.getUserByEmail(email, (err, user) => {
         if(err){
@@ -79,13 +88,17 @@ router.post('/login', (req, res, next) => {
     });
 });
 router.put('/changePassword', (req, res, next) => {
-    const { password, newPassword } = req.body;
+    
+    const { error } = Joi.validate(req.body,schemas.changePassword);
+
+    if (error) {
+        return res.status(rm.invalidParameters.code).json(rm.invalidParameters.msg);
+    }
+
     const token = req.get('authorization').split(' ')[1]; // Extract the token from Bearer
     const email = jwt.decode(token).payload.email;
 
-    if(!password || !newPassword){
-        return res.status(rm.invalidParameters.code).json(rm.invalidParameters.msg);
-    }
+    const { password, newPassword } = req.body;
 
     User.getUserByEmail(email, (err, user) => {
         if(err){
@@ -115,12 +128,15 @@ router.put('/changePassword', (req, res, next) => {
 });
 
 router.get('/role', (req, res, next) => {
-    const { email } = req.query;
-    const token = req.get('authorization').split(' ')[1]; // Extract the token from Bearer
+    
+    const { error } = Joi.validate(req.query,schemas.getRole);
 
-    if(!email){
+    if (error) {
         return res.status(rm.invalidParameters.code).json(rm.invalidParameters.msg);
     }
+    
+    const { email } = req.query;
+    const token = req.get('authorization').split(' ')[1]; // Extract the token from Bearer
 
     tokenResponse(token, res, next, () => {
         User.getUserByEmail(email, (err, user) => {
@@ -141,12 +157,15 @@ router.get('/role', (req, res, next) => {
 });
 
 router.put('/role', (req, res, next) => {
-    const { email, role} = req.body;
-    const token = req.get('authorization').split(' ')[1]; // Extract the token from Bearer
 
-    if(!email || !role){
+    const { error } = Joi.validate(req.body,schemas.changeRole);
+
+    if (error) {
         return res.status(rm.invalidParameters.code).json(rm.invalidParameters.msg);
     }
+
+    const { email, role} = req.body;
+    const token = req.get('authorization').split(' ')[1]; // Extract the token from Bearer
 
     tokenResponse(token, res, next, (token) => {
         User.getUserByEmail(jwt.decode(token).payload.email, (err, user) => { // get email from jwt
