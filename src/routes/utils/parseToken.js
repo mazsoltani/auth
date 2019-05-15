@@ -3,7 +3,7 @@ const rm = require('../../static/response_messages');
 const jwt = require('../../jwt/jwtService');
 
 
-module.exports.tokenResponse = (token, req, res, func) => {
+module.exports.tokenResponse = (token, res , next , func) => {
     LoggedIn.getRecordByToken(token, (err, record) => {
         if (err) {
             return next(err);
