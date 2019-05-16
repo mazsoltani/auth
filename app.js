@@ -19,11 +19,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use('/auth/v1/', indexRouter);
-app.use('/auth/v1/validate', validateRouter);
 
 // middleware responsible for checking if token exists (in needed routes)
 // routers that do not require token should be declared before this middleware
-app.use(function(req, res, next){
+app.use((req, res, next) => {
   let authRequired = false;
 
   // check if the request is excluded from checking
@@ -33,12 +32,13 @@ app.use(function(req, res, next){
     }
   });
 
-  if (authRequired){
+  if(authRequired){
     return res.status(rm.noCredentials.code).json(rm.noCredentials.msg);
   }
   next();
 });
 
+app.use('/auth/v1/validate', validateRouter);
 app.use('/auth/v1/user', userRouter);
 
 // catch 404 and forward to error handler

@@ -17,5 +17,9 @@
             "method": "PUT"
             ,"url": "/auth/v1/user/role"
         }
+        ,{
+            "method": "GET"
+            ,"url": "/auth/v1/validate/token"
+        }
     ]
 }

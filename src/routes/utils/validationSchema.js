@@ -24,7 +24,4 @@ module.exports = {
         email : emailValidation,
         role : roleValidation
     })
-    ,validateToken: Joi.object({
-        token: tokenValidation
-    })
 }
