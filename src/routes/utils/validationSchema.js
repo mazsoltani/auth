@@ -20,9 +20,6 @@ module.exports = {
         password : passwordValidation,
         newPassword : passwordValidation
     })
-    ,getRole: Joi.object({
-        email : emailValidation
-    })
     ,changeRole: Joi.object({
         email : emailValidation,
         role : roleValidation

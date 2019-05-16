@@ -15,7 +15,6 @@ const sn = require('./../static/names.json');
 const tokenResponse = require('./utils/parseToken').tokenResponse;
 
 router.post('/register', (req, res, next) => {
-
     const { error } = Joi.validate(req.body,schemas.register);
 
     if (error) {
@@ -43,7 +42,6 @@ router.post('/register', (req, res, next) => {
 });
 
 router.post('/login', (req, res, next) => {
-    
     const { error } = Joi.validate(req.body, schemas.login);
 
     if (error) {
@@ -88,7 +86,6 @@ router.post('/login', (req, res, next) => {
     });
 });
 router.put('/changePassword', (req, res, next) => {
-    
     const { error } = Joi.validate(req.body,schemas.changePassword);
 
     if (error) {
@@ -128,18 +125,14 @@ router.put('/changePassword', (req, res, next) => {
 });
 
 router.get('/role', (req, res, next) => {
-    
-    const { error } = Joi.validate(req.query,schemas.getRole);
-
-    if (error) {
-        return res.status(rm.invalidParameters.code).json(rm.invalidParameters.msg);
-    }
-    
-    const { email } = req.query;
     const token = req.get('authorization').split(' ')[1]; // Extract the token from Bearer
 
+    if(!token) {
+        return res.status(rm.invalidParameters.code).json(rm.invalidParameters.msg);
+    }
+
     tokenResponse(token, res, next, () => {
-        User.getUserByEmail(email, (err, user) => {
+        User.getUserByEmail(jwt.decode(token).payload.email, (err, user) => {
             if(err){
                 return next(err);
             }
@@ -157,7 +150,6 @@ router.get('/role', (req, res, next) => {
 });
 
 router.put('/role', (req, res, next) => {
-
     const { error } = Joi.validate(req.body,schemas.changeRole);
 
     if (error) {
