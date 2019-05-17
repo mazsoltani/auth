@@ -12,8 +12,6 @@ const jwt = require('../jwt/jwtService');
 const rm = require('./../static/response_messages.json');
 const sn = require('./../static/names.json');
 
-const tokenResponse = require('./utils/parseToken').tokenResponse;
-
 router.post('/register', (req, res, next) => {
     const { error } = Joi.validate(req.body,schemas.register);
 
@@ -92,11 +90,10 @@ router.put('/changePassword', (req, res, next) => {
         return res.status(rm.invalidParameters.code).json(rm.invalidParameters.msg);
     }
 
-    const token = req.get('authorization').split(' ')[1]; // Extract the token from Bearer
-    const email = jwt.decode(token).payload.email;
-
+    const token = req.get(sn.authorizationName).split(' ')[1]; // Extract the token from Bearer
     const { password, newPassword } = req.body;
 
+    const { email } = jwt.decode(token).payload;
     User.getUserByEmail(email, (err, user) => {
         if(err){
             return next(err);
@@ -125,27 +122,21 @@ router.put('/changePassword', (req, res, next) => {
 });
 
 router.get('/role', (req, res, next) => {
-    const token = req.get('authorization').split(' ')[1]; // Extract the token from Bearer
+    const token = req.get(sn.authorizationName).split(' ')[1]; // Extract the token from Bearer
 
-    if(!token){
-        return res.status(rm.invalidParameters.code).json(rm.invalidParameters.msg);
-    }
+    User.getUserByEmail(jwt.decode(token).payload.email, (err, user) => {
+        if(err){
+            return next(err);
+        }
+        if(!user){
+            return res.status(rm.emailNotFound.code).json(rm.emailNotFound.msg);
+        }
 
-    tokenResponse(token, res, next, () => {
-        User.getUserByEmail(jwt.decode(token).payload.email, (err, user) => {
-            if(err){
-                return next(err);
-            }
-            if(!user){
-                return res.status(rm.emailNotFound.code).json(rm.emailNotFound.msg);
-            }
-
-            var body = {
-                [sn.email]: user.email
-                ,[sn.role] : user.role
-            };
-            res.status(rm.loggedIn.code).json(body);
-        });
+        var body = {
+            [sn.email]: user.email
+            ,[sn.role] : user.role
+        };
+        res.status(rm.loggedIn.code).json(body);
     });
 });
 
@@ -157,44 +148,39 @@ router.put('/role', (req, res, next) => {
     }
 
     const { email, role} = req.body;
-    const token = req.get('authorization').split(' ')[1]; // Extract the token from Bearer
+    const token = req.get(sn.authorizationName).split(' ')[1]; // Extract the token from Bearer
 
-    tokenResponse(token, res, next, (token) => {
-        User.getUserByEmail(jwt.decode(token).payload.email, (err, user) => { // get email from jwt
+    User.getUserByEmail(jwt.decode(token).payload.email, (err, user) => { // get email from jwt
+        if(err){
+            return next(err);
+        }
+        if(!user){
+            return res.status(rm.emailNotFound.code).json(rm.emailNotFound.msg);
+        }
+        if(role !== sn.adminRole && role !== sn.userRole && role !== sn.guestRole){
+            return res.status(rm.notAcceptableRole.code).json(rm.notAcceptableRole.msg);
+        }
+        if(user.role != sn.adminRole){ // check if the requester is actually an admin
+            return res.status(rm.notAuthorized.code).json(rm.notAuthorized.msg);
+        }
+
+        User.updateRole(email, role, (err) => {
             if(err){
                 return next(err);
             }
-            if(!user){
-                return res.status(rm.emailNotFound.code).json(rm.emailNotFound.msg);
-            }
-            if(role !== sn.adminRole && role !== sn.userRole && role !== sn.guestRole){
-                return res.status(rm.notAcceptableRole.code).json(rm.notAcceptableRole.msg);
-            }
-            if(user.role != sn.adminRole){ // check if the requester is actually an admin
-                return res.status(rm.notAuthorized.code).json(rm.notAuthorized.msg);
-            }
 
-            User.updateRole(email, role, (err) => {
-                if(err){
-                    return next(err);
-                }
-
-                res.status(rm.changeRoleSuccess.code).json(rm.changeRoleSuccess.msg);
-            });
+            res.status(rm.changeRoleSuccess.code).json(rm.changeRoleSuccess.msg);
         });
     });
 });
 
 router.delete('/logout', (req, res, next) => {
-    const token = req.get('authorization').split(' ')[1]; // Extract the token from Bearer
-
-    tokenResponse(token, res, next, (token) => {
-        LoggedIn.removeRecordByToken(token, (err) => {
-            if(err){
-                return next(err);
-            }
-            res.status(rm.loggedOutSuccess.code).json(rm.loggedOutSuccess.msg);
-        });
+    const token = req.get(sn.authorizationName).split(' ')[1]; // Extract the token from Bearer
+    LoggedIn.removeRecordByToken(token, (err) => {
+        if(err){
+            return next(err);
+        }
+        res.status(rm.loggedOutSuccess.code).json(rm.loggedOutSuccess.msg);
     });
 });
 

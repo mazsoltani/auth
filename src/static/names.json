@@ -12,4 +12,5 @@
     ,"email": "email"
     ,"message": "message"
     ,"duplicateError": 11000
+    ,"authorizationName": "authorization"
 }
