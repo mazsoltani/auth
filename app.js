@@ -1,13 +1,13 @@
 const express = require('express');
 const logger = require('morgan');
 
-const mongoose = require('mongoose').catch(err => {
+const mongoose = require('mongoose');
+const config = require('./config/config.json');
+mongoose.connect(config.dbURL).catch(err => {
     console.error("Could Not Connect to the Database !!!");
     console.error('App starting error:', err.stack);
     process.exit(1);
 });
-const config = require('./config/config.json');
-mongoose.connect(config.dbURL);
 const adminUser = require('./scripts/adminUser');
 
 const indexRouter = require('./src/routes/index');
