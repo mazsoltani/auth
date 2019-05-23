@@ -1,13 +1,16 @@
 const express = require('express');
 const logger = require('morgan');
 
-const mongoose = require('mongoose');
 const config = require('./config/config.json');
-mongoose.connect(config.dbURL).catch(err => {
-  console.error("Could Not Connect to the Database !!!");
-  console.error('App starting error:', err.stack);
-  process.exit(1);
+const mongoose = require('mongoose');
+mongoose.connect(config.dbURL, {
+    useCreateIndex: true,
+    useNewUrlParser: true,
+}).catch(err => {
+    console.error("Could Not Connect to the Database: ", err.stack);
+    process.exit(1);
 });
+
 const adminUser = require('./scripts/adminUser');
 
 const indexRouter = require('./src/routes/index');
@@ -24,7 +27,9 @@ const app = express();
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({
+    extended: false
+}));
 
 app.use('/auth/v1/', indexRouter);
 
@@ -51,12 +56,12 @@ const validateToken = (token) => { // checks if the jwt has expired
     , audience: jwt.fumClientIssuer
   };
 
-  const legit = jwt.verify(token, verifyOptions);
-  currentTime = new Date().getTime() / 1000 | 0;
+    const legit = jwt.verify(token, verifyOptions);
+    currentTime = new Date().getTime() / 1000 | 0;
 
-  if (currentTime > legit.iat && currentTime < legit.exp)
-    return true;
-  return false;
+    if (currentTime > legit.iat && currentTime < legit.exp)
+        return true;
+    return false;
 }
 
 
@@ -93,15 +98,15 @@ app.use('/auth/v1/user', userRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
-  res.sendStatus(404);
+    res.sendStatus(404);
 });
 
 // error handler
 app.use((err, req, res) => {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-  res.sendStatus(err.status || 500);
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
+    res.sendStatus(err.status || 500);
 });
 
 // Create admin user if not already created
