@@ -11,6 +11,10 @@
         }
         ,{
             "method": "GET"
+            ,"url": "/auth/v1/user/list"
+        }
+        ,{
+            "method": "GET"
             ,"url": "/auth/v1/user/role"
         }
         ,{

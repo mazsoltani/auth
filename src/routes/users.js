@@ -37,7 +37,7 @@ router.post('/register', (req, res, next) => {
             return next(err);
         }
 
-        res.status(rm.registerSuccessful.code).json(rm.registerSuccessful.msg);
+        return res.status(rm.registerSuccessful.code).json(rm.registerSuccessful.msg);
     });
 });
 
@@ -80,7 +80,7 @@ router.post('/login', (req, res, next) => {
                 var body = {
                     token
                 };
-                res.status(rm.loggedInSuccess.code).json(body);
+                return res.status(rm.loggedInSuccess.code).json(body);
             });
         });
     });
@@ -124,12 +124,35 @@ router.put('/changePassword', (req, res, next) => {
     });
 });
 
+router.get('/list', (req, res, next) => {
+    const token = req.get('authorization').split(' ')[1]; // Extract the token from Bearer
+    console.log(req.query);
+    User.getUsers((err, result) => {
+        if(err){
+            return next(err);
+        }
+
+        let body = {
+            usersList: []
+        };
+
+        result.forEach(({email, role}) => {
+            let user = {
+                [sn.email]: email
+                ,[sn.role]: role
+            };
+
+            body.usersList.push(user);
+            // var newList = Object.assign(JSON.stringify(newList), user);
+            console.log(body);
+        });
+
+        return res.status(rm.loggedIn.code).json(body);
+    });
+});
+
 router.get('/role', (req, res, next) => {
     const token = req.get('authorization').split(' ')[1]; // Extract the token from Bearer
-
-    if(!token){
-        return res.status(rm.invalidParameters.code).json(rm.invalidParameters.msg);
-    }
 
     tokenResponse(token, res, next, () => {
         User.getUserByEmail(jwt.decode(token).payload.email, (err, user) => {
@@ -142,9 +165,9 @@ router.get('/role', (req, res, next) => {
 
             var body = {
                 [sn.email]: user.email
-                ,[sn.role] : user.role
+                ,[sn.role]: user.role
             };
-            res.status(rm.loggedIn.code).json(body);
+            return res.status(rm.loggedIn.code).json(body);
         });
     });
 });
@@ -179,7 +202,7 @@ router.put('/role', (req, res, next) => {
                     return next(err);
                 }
 
-                res.status(rm.changeRoleSuccess.code).json(rm.changeRoleSuccess.msg);
+                return res.status(rm.changeRoleSuccess.code).json(rm.changeRoleSuccess.msg);
             });
         });
     });
@@ -193,7 +216,7 @@ router.delete('/logout', (req, res, next) => {
             if(err){
                 return next(err);
             }
-            res.status(rm.loggedOutSuccess.code).json(rm.loggedOutSuccess.msg);
+            return res.status(rm.loggedOutSuccess.code).json(rm.loggedOutSuccess.msg);
         });
     });
 });

@@ -3,7 +3,10 @@ const logger = require('morgan');
 
 const mongoose = require('mongoose');
 const config = require('./config/config.json');
-mongoose.connect(config.dbURL);
+mongoose.connect(config.dbURL, {
+  useCreateIndex: true,
+  useNewUrlParser: true,
+});
 const adminUser = require('./scripts/adminUser');
 
 const indexRouter = require('./src/routes/index');

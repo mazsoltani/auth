@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 const config = require('../../config/config.json');
 
-mongoose.connect(config.dbURL);
-
 const LoggedInSchema = mongoose.Schema({
     token: {
         type: String

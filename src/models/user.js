@@ -4,8 +4,6 @@ const bcrypt = require('bcryptjs');
 const Joi = require('@hapi/joi');
 const sn = require('../static/names.json');
 
-mongoose.connect(config.dbURL);
-
 const UserSchema = mongoose.Schema({
     email: {
         type: String
@@ -51,6 +49,10 @@ module.exports.createUser = (newUser, callback) => {
             });
         }
     });
+};
+
+module.exports.getUsers = (callback) => {
+    User.find(callback);
 };
 
 module.exports.getUserByEmail = (email, callback) => {
