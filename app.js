@@ -4,9 +4,9 @@ const logger = require('morgan');
 const mongoose = require('mongoose');
 const config = require('./config/config.json');
 mongoose.connect(config.dbURL).catch(err => {
-    console.error("Could Not Connect to the Database !!!");
-    console.error('App starting error:', err.stack);
-    process.exit(1);
+  console.error("Could Not Connect to the Database !!!");
+  console.error('App starting error:', err.stack);
+  process.exit(1);
 });
 const adminUser = require('./scripts/adminUser');
 
@@ -30,31 +30,32 @@ app.use('/auth/v1/', indexRouter);
 
 
 
-tokenResponse = (token, res , next) => {
-  LoggedIn.getRecordByToken(token, (err, record) => {
-      if (err) {
-          return next(err);
-      }
-      if (!record) {
-          return res.status(rm.notLoggedIn.code).json(rm.notLoggedIn.msg);
-      }
-      if (!validateToken(token)) {
-          return res.status(rm.sessionInvalid.code).json(rm.sessionInvalid.msg);
-      }
-  });
+tokenResponse = (token, res, next) => {
+  try {
+    let result = LoggedIn.getRecordByToken(token);
+    if (!result) {
+      return res.status(rm.notLoggedIn.code).json(rm.notLoggedIn.msg);
+    }
+    if (!validateToken(token)) {
+      return res.status(rm.sessionInvalid.code).json(rm.sessionInvalid.msg);
+    }
+  }
+  catch (err) {
+    return next(err);
+  }
 }
 
 const validateToken = (token) => { // checks if the jwt has expired
   const verifyOptions = {
-      issuer: jwt.fumServerIssuer
-      , audience: jwt.fumClientIssuer
+    issuer: jwt.fumServerIssuer
+    , audience: jwt.fumClientIssuer
   };
 
   const legit = jwt.verify(token, verifyOptions);
   currentTime = new Date().getTime() / 1000 | 0;
 
   if (currentTime > legit.iat && currentTime < legit.exp)
-      return true;
+    return true;
   return false;
 }
 
@@ -66,19 +67,22 @@ app.use((req, res, next) => {
   let authRequired = false;
 
   // check if the request is excluded from checking
-  config.AuthenticationList.forEach(({method, url}) => {
-    if(method === req.method && url === req.path){
-      if(req.headers.authorization){
+  for (let index = 0; index < config.AuthenticationList.length; index++) {
+    const { method, url } = config.AuthenticationList[index];
+    if (method === req.method && url === req.path) {
+      if (req.headers.authorization) {
         const token = req.get(sn.authorizationName).split(' ')[1]; // Extract the token from Bearer
-        tokenResponse(token, res, next);
+        if (tokenResponse(token, res, next)) {
+          return;
+        };
       }
-      else{
+      else {
         authRequired = true;
       }
     }
-  });
+  }
 
-  if(authRequired){
+  if (authRequired) {
     return res.status(rm.noCredentials.code).json(rm.noCredentials.msg);
   }
   next();
