@@ -5,6 +5,8 @@ API Reference is provided in the https://github.com/SayidHosseini/Authentication
 
 WARNING: This service uses `JWT` for __authentication__ and __session management__. Currently, we do *not* deploy unique key pairs for each new environment (this feature will be available soon). If you'd like to deploy this project in a production environment, it is very important to generate your own __public__ / __private__ key pair. The generated key pair should be placed in `src/jwt/` with the names `public.key` and `private.key`.
 
+{empty} +
+
 === Setting up As a Service ===
 In order to run this as a service and probably develop on top of it, you'll need a to do the followings:
 
@@ -25,9 +27,6 @@ If you want to run the module as a containerize microservice, you'll need to ins
 * Although the Dockerfile has been provided, you do not need to make your own copy of the image if you do not need to modify the source. The latest version for amd64 architecture is always built https://docs.docker.com/docker-hub/builds/[automatically] and pushed to the https://hub.docker.com/r/sayid/auth[DockerHub repository]. It is addressable with the `latest` tag `sayid/auth:latest`. Image for ARM architecture is built (not automatically, so sometimes it might be a little behind the latest commit) and is addressable with the `arm` tag `sayid/auth:arm`.
 * It is recommended to maintain your own copy of the image, if you want to freeze on a specific commit; since the aforementioned image is always updated to the latest commit. If you want to make your own copy of the image, clone it on the target platform and `cd` to the cloned repository. The run `docker build -t $DOCKER_ACC/$DOCKER_REPO:$IMG_TAG .`. You may push it to https://docs.docker.com/docker-hub/repos/[DockerHub] after building is complete.
 * If you are planning to use this microservice in a production environment, generate your own key pair, as mentioned above. After that, remember to create your own image, as well.
-
-
-{empty} +
 
 === License ===
 Developed by S. Saeed Hosseini and Mohammad Moradi, released under MIT License.
