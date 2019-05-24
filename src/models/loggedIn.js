@@ -15,16 +15,16 @@ module.exports.createLoggedIn = (newLoggedIn, callback) => {
     newLoggedIn.save(callback);
 };
 
-module.exports.getRecordByToken = async (token) => {
+module.exports.getRecordByToken = (token) => {
     const query = {
         token
     };
-    return await LoggedIn.findOne(query);
+    return LoggedIn.findOne(query);
 };
 
 module.exports.removeRecordByToken = (token, callback) => {
     const query = {
         token
     };
-    LoggedIn.deleteOne(query, callback)
+    LoggedIn.deleteOne(query, callback);
 };

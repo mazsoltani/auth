@@ -33,18 +33,22 @@ app.use(express.urlencoded({
 
 app.use('/auth/v1/', indexRouter);
 
-tokenResponse = (token, res, next) => {
+tokenResponse = async (token, res, next) => {
     try {
-        let result = LoggedIn.getRecordByToken(token);
+        let result = await LoggedIn.getRecordByToken(token);
         if (!result) {
-            return res.status(rm.notLoggedIn.code).json(rm.notLoggedIn.msg);
+            res.status(rm.notLoggedIn.code).json(rm.notLoggedIn.msg);
+            return false;
         }
         if (!validateToken(token)) {
-            return res.status(rm.sessionInvalid.code).json(rm.sessionInvalid.msg);
+            res.status(rm.sessionInvalid.code).json(rm.sessionInvalid.msg);
+            return false;
         }
     } catch (err) {
-        return next(err);
+        next(err);
+        return false;
     }
+    return true;
 }
 
 const validateToken = (token) => { // checks if the jwt has expired
@@ -63,29 +67,27 @@ const validateToken = (token) => { // checks if the jwt has expired
 
 // middleware responsible for checking if token exists (in needed routes)
 // routers that do not require token should be declared before this middleware
-app.use((req, res, next) => {
-    let authRequired = false;
-
-    // check if the request is excluded from checking
+app.use(async (req, res, next) => {
+    // check if the request is included in checking
     for (let index = 0; index < config.AuthenticationList.length; index++) {
         const {
             method,
             url
         } = config.AuthenticationList[index];
+
         if (method === req.method && url === req.path) {
-            if (req.headers.authorization) {
-                const token = req.get(sn.authorizationName).split(' ')[1]; // Extract the token from Bearer
-                if (tokenResponse(token, res, next)) {
-                    return;
-                };
+            if (!req.headers.authorization) {
+                return res.status(rm.noCredentials.code).json(rm.noCredentials.msg);
             } else {
-                authRequired = true;
+                const token = req.get(sn.authorizationName).split(' ')[1]; // Extract the token from Bearer
+                if(!await tokenResponse(token, res, next)) {
+                    return;
+                }
+                else {
+                    break;
+                }
             }
         }
-    }
-
-    if (authRequired) {
-        return res.status(rm.noCredentials.code).json(rm.noCredentials.msg);
     }
     next();
 });
