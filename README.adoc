@@ -1,2 +1,25 @@
-== FUM-Elect Authentication Microservice ==
-This is a key component from the https://github.com/SayidHosseini/FUM-Elect[FUM-Elect] project.
+== Authentication Service / Microservice ==
+This is a RESTful Authentication Service written in Node.js with Mongo database. It is intended that the developer use this as a module (microservice) in a project; rather than a standalone service since it is only a mean of authentication. That being said, if you plan to develop a service that includes authentication, it might be a good idea to have a head start and build on top of this project instead of starting one from scratch.
+
+API Reference is provided in the https://github.com/SayidHosseini/AuthenticationService/wiki[wiki] pages.
+
+WARNING: This service uses `JWT` for __authentication__ and __session management__. Currently, we do *not* deploy unique key pairs for each new environment (this feature will be available soon). If you'd like to deploy this project in a production environment, it is very important to generate your own __public__ / __private__ key pair. The generated key pair should be placed in `src/jwt/` with the names `public.key` and `private.key`.
+
+=== Setting up As a Service ===
+
+
+{empty} +
+
+=== Setting up As a Microservice ===
+If you want to run the module as a containerize microservice, you'll need to install https://www.docker.com[Docker].
+
+* In order to use this as a microservice in your project, you'll need a MongoDB container with the name `mongo`. This is the name that should be resolved to the IP address of the mongoDB container. If you need to change that for any reason, you'll need to modify the `dbURL` parameter in `config/config.json`, accordingly.
+* Although the Dockerfile has been provided, you do not need to make your own copy of the image if you do not need to modify the source. The latest version for amd64 architecture is always built https://docs.docker.com/docker-hub/builds/[automatically] and pushed to the https://hub.docker.com/r/sayid/auth[DockerHub repository]. It is addressable with the `latest` tag `sayid/auth:latest`. Image for ARM architecture is built (not automatically, so sometimes it might be a little behind the latest commit) and is addressable with the `arm` tag `sayid/auth:arm`.
+* It is recommended to maintain your own copy of the image, if you want to freeze on a specific commit; since the aforementioned image is always updated to the latest commit. If you want to make your own copy of the image, clone it on the target platform and `cd` to the cloned repository. The run `docker build -t $DOCKER_ACC/$DOCKER_REPO:$IMG_TAG .`. You may push it to https://docs.docker.com/docker-hub/repos/[DockerHub] after building is complete.
+* If you are planning to use this microservice in a production environment, generate your own key pair, as mentioned above. After that, remember to create your own image, as well.
+
+
+{empty} +
+
+=== License ===
+Developed by S. Saeed Hosseini and Mohammad Moradi, released under MIT License.
