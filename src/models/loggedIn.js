@@ -3,9 +3,9 @@ const config = require('../../config/config.json');
 
 const LoggedInSchema = mongoose.Schema({
     token: {
-        type: String
-        ,required: true
-        ,unique: true
+        type: String,
+        required: true,
+        unique: true
     }
 });
 
@@ -16,11 +16,15 @@ module.exports.createLoggedIn = (newLoggedIn, callback) => {
 };
 
 module.exports.getRecordByToken = (token, callback) => {
-    const query = { token };
+    const query = {
+        token
+    };
     LoggedIn.findOne(query, callback);
 };
 
 module.exports.removeRecordByToken = (token, callback) => {
-    const query = { token };
-    LoggedIn.remove(query, callback);
-}
+    const query = {
+        token
+    };
+    LoggedIn.deleteOne(query, callback)
+};

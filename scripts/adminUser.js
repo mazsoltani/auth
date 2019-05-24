@@ -8,14 +8,14 @@ module.exports.create = () => {
         password: staticNames.adminPassword,
         profileImage: staticNames.adminProfile,
         role: staticNames.adminRole
-        });
+    });
     User.getUserByEmail(adminUser.email, (err, user) => { // check to see if admin user exists
-        if(err){
+        if (err) {
             console.log("Couldn't create the admin user");
         }
-        if(!user){
+        if (!user) {
             User.createUser(adminUser, (err, user) => { // add admin user if doesn't already exist
-                if(err){
+                if (err) {
                     console.log("Couldn't create the admin user");
                 }
             });
