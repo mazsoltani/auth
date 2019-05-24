@@ -6,7 +6,15 @@ API Reference is provided in the https://github.com/SayidHosseini/Authentication
 WARNING: This service uses `JWT` for __authentication__ and __session management__. Currently, we do *not* deploy unique key pairs for each new environment (this feature will be available soon). If you'd like to deploy this project in a production environment, it is very important to generate your own __public__ / __private__ key pair. The generated key pair should be placed in `src/jwt/` with the names `public.key` and `private.key`.
 
 === Setting up As a Service ===
+In order to run this as a service and probably develop on top of it, you'll need a to do the followings:
 
+* Install https://nodejs.org/en/[node.js] and https://www.mongodb.com/[mongoDB]
+* Clone the repository and `cd` to the cloned repository
+* To install dependency packages, run `npm install`
+* To run the application for development purposes, run `npm run dev` or `nodemon`
+* To run it for production you may run `npm start`
+
+NOTE: Running `npm start` will only run your application; it will not relaunch it in the case that it crashes. To do that, you use https://www.npmjs.com/package/pm2[PM2] or https://www.npmjs.com/package/forever[Forever] or any other package that provides this feature, in order to sustain availability.
 
 {empty} +
 
