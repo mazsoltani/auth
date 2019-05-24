@@ -36,24 +36,25 @@ app.use('/auth/v1/', indexRouter);
 
 
 tokenResponse = (token, res, next) => {
-    LoggedIn.getRecordByToken(token, (err, record) => {
-        if (err) {
-            return next(err);
-        }
-        if (!record) {
-            return res.status(rm.notLoggedIn.code).json(rm.notLoggedIn.msg);
-        }
-        if (!validateToken(token)) {
-            return res.status(rm.sessionInvalid.code).json(rm.sessionInvalid.msg);
-        }
-    });
+  try {
+    let result = LoggedIn.getRecordByToken(token);
+    if (!result) {
+      return res.status(rm.notLoggedIn.code).json(rm.notLoggedIn.msg);
+    }
+    if (!validateToken(token)) {
+      return res.status(rm.sessionInvalid.code).json(rm.sessionInvalid.msg);
+    }
+  }
+  catch (err) {
+    return next(err);
+  }
 }
 
 const validateToken = (token) => { // checks if the jwt has expired
-    const verifyOptions = {
-        issuer: jwt.fumServerIssuer,
-        audience: jwt.fumClientIssuer
-    };
+  const verifyOptions = {
+    issuer: jwt.fumServerIssuer
+    , audience: jwt.fumClientIssuer
+  };
 
     const legit = jwt.verify(token, verifyOptions);
     currentTime = new Date().getTime() / 1000 | 0;
@@ -68,27 +69,28 @@ const validateToken = (token) => { // checks if the jwt has expired
 // middleware responsible for checking if token exists (in needed routes)
 // routers that do not require token should be declared before this middleware
 app.use((req, res, next) => {
-    let authRequired = false;
+  let authRequired = false;
 
-    // check if the request is excluded from checking
-    config.AuthenticationList.forEach(({
-        method,
-        url
-    }) => {
-        if (method === req.method && url === req.path) {
-            if (req.headers.authorization) {
-                const token = req.get(sn.authorizationName).split(' ')[1]; // Extract the token from Bearer
-                tokenResponse(token, res, next);
-            } else {
-                authRequired = true;
-            }
-        }
-    });
-
-    if (authRequired) {
-        return res.status(rm.noCredentials.code).json(rm.noCredentials.msg);
+  // check if the request is excluded from checking
+  for (let index = 0; index < config.AuthenticationList.length; index++) {
+    const { method, url } = config.AuthenticationList[index];
+    if (method === req.method && url === req.path) {
+      if (req.headers.authorization) {
+        const token = req.get(sn.authorizationName).split(' ')[1]; // Extract the token from Bearer
+        if (tokenResponse(token, res, next)) {
+          return;
+        };
+      }
+      else {
+        authRequired = true;
+      }
     }
-    next();
+  }
+
+  if (authRequired) {
+    return res.status(rm.noCredentials.code).json(rm.noCredentials.msg);
+  }
+  next();
 });
 
 app.use('/auth/v1/validate', validateRouter);
