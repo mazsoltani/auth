@@ -1,7 +1,7 @@
 const express = require('express');
 const logger = require('morgan');
 
-const config = require('./config/config.json');
+const config = require('./../config/config.json');
 const mongoose = require('mongoose');
 mongoose.connect(config.dbURL, {
     useCreateIndex: true,
@@ -11,17 +11,17 @@ mongoose.connect(config.dbURL, {
     process.exit(1);
 });
 
-const adminUser = require('./scripts/adminUser');
+const adminUser = require('../scripts/adminUser');
 
-const indexRouter = require('./src/routes/index');
-const userRouter = require('./src/routes/users');
-const validateRouter = require('./src/routes/validate');
+const indexRouter = require('./routes/index');
+const userRouter = require('./routes/users');
+const validateRouter = require('./routes/validate');
 
-const rm = require('./src/static/response_messages.json');
-const sn = require('./src/static/names.json');
+const rm = require('./static/response_messages.json');
+const sn = require('./static/names.json');
 
-const LoggedIn = require('./src/models/loggedIn');
-const jwt = require('./src/jwt/jwtService');
+const LoggedIn = require('./models/loggedIn');
+const jwt = require('./jwt/jwtService');
 
 const app = express();
 

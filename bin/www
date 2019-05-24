@@ -4,8 +4,8 @@
  * Module dependencies.
  */
 
-var app = require('../app');
-var debug = require('debug')('restauth:server');
+var app = require('../src/app');
+var debug = require('debug')('auth:server');
 var http = require('http');
 
 /**

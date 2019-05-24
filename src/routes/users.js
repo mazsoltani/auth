@@ -145,7 +145,7 @@ router.put('/changePassword', (req, res, next) => {
 });
 
 router.get('/list', (req, res, next) => {
-    const token = req.get('authorization').split(' ')[1]; // Extract the token from Bearer
+    const token = req.get(sn.authorizationName).split(' ')[1]; // Extract the token from Bearer
     console.log(req.query);
     User.getUsers((err, result) => {
         if (err) {
