@@ -16,7 +16,7 @@ In order to run this as a service and probably develop on top of it, you'll need
 * To run the application for development purposes, run `npm run dev` or `nodemon`
 * To run it for production you may run `npm start`
 
-NOTE: Running `npm start` will only run your application; it will not relaunch it in the case that it crashes. To do that, you use https://www.npmjs.com/package/pm2[PM2] or https://www.npmjs.com/package/forever[Forever] or any other package that provides this feature, in order to sustain availability.
+NOTE: Running `npm start` will only run your application; it will not relaunch it in the case that it crashes. To do that, you may use https://www.npmjs.com/package/pm2[PM2] or https://www.npmjs.com/package/forever[Forever] or any other package that provides this feature, in order to sustain availability.
 
 {empty} +
 
