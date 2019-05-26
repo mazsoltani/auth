@@ -1,7 +1,8 @@
 const express = require('express');
 const logger = require('morgan');
 
-const config = require('./../config/config.json');
+const config = require('../config/config');
+const errorMessages = require('./static/errorMessages');
 const mongoose = require('mongoose');
 
 // check if db has been provided in environment variables
@@ -11,7 +12,7 @@ mongoose.connect(dbURI, {
     useCreateIndex: true,
     useNewUrlParser: true,
 }).catch(err => {
-    console.error("Could Not Connect to the Database: ", err.stack);
+    console.error(errorMessages.databaseConnectionError, err.stack);
     process.exit(1);
 });
 
@@ -21,15 +22,15 @@ const indexRouter = require('./routes/index');
 const userRouter = require('./routes/users');
 const validateRouter = require('./routes/validate');
 
-const rm = require('./static/response_messages.json');
-const sn = require('./static/names.json');
+const rm = require('./static/responseMessages');
+const sn = require('./static/names');
 
 const LoggedIn = require('./models/loggedIn');
 const jwt = require('./jwt/jwtService');
 
 const app = express();
 
-app.use(logger('dev'));
+app.use(logger('combined'));
 app.use(express.json());
 app.use(express.urlencoded({
     extended: false

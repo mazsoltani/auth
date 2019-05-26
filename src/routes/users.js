@@ -9,8 +9,8 @@ const LoggedIn = require('../models/loggedIn');
 
 const jwt = require('../jwt/jwtService');
 
-const rm = require('./../static/response_messages.json');
-const sn = require('./../static/names.json');
+const rm = require('../static/responseMessages');
+const sn = require('../static/names');
 
 router.post('/register', (req, res, next) => {
     const {

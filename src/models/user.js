@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const Joi = require('@hapi/joi');
-const sn = require('../static/names.json');
+const sn = require('../static/names');
 
 const UserSchema = mongoose.Schema({
     email: {

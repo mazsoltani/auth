@@ -1,5 +1,5 @@
 const Joi = require('@hapi/joi');
-const sn = require('../../static/names.json');
+const sn = require('../../static/names');
 
 
 const passwordValidation = Joi.string().required().regex(/^[a-zA-Z0-9!@#$%^&*]{8,}$/);

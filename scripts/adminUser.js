@@ -1,5 +1,5 @@
 const User = require('../src/models/user');
-const staticNames = require('./../src/static/names.json');
+const staticNames = require('../src/static/names');
 
 module.exports.create = () => {
     const adminUser = new User({
