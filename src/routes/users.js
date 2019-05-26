@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const Joi = require('@hapi/joi');
-const schemas = require('./utils/validationSchema');
+const schemas = require('../utils/validationSchema');
 
 const User = require('../models/user');
 const LoggedIn = require('../models/loggedIn');
