@@ -86,23 +86,17 @@ module.exports.updateRole = (email, role, callback) => {
     });
 };
 
-module.exports.changePassword = (email, newPassword, callback) => {
-    User.getUserByEmail(email, (err, user) => {
+module.exports.changePassword = (user, newPassword, callback) => {
+    bcrypt.genSalt(10, (err, salt) => {
         if (err) {
-            callback(err, null)
+            callback(err, null);
         } else {
-            bcrypt.genSalt(10, (err, salt) => {
+            bcrypt.hash(newPassword, salt, (err, hash) => {
                 if (err) {
                     callback(err, null);
                 } else {
-                    bcrypt.hash(newPassword, salt, (err, hash) => {
-                        if (err) {
-                            callback(err, null);
-                        } else {
-                            user.password = hash;
-                            user.save(callback);
-                        }
-                    });
+                    user.password = hash;
+                    user.save(callback);
                 }
             });
         }
