@@ -12,6 +12,7 @@ In order to run this as a service and probably develop on top of it, you'll need
 
 * Install https://nodejs.org/en/[node.js] and https://www.mongodb.com/[mongoDB]
 * Clone the repository and `cd` to the cloned repository
+* Set environment variable `DB` to the full URI of your mongo database or modify the `dbURL` parameter in `config/config.json` (first one overrides the second)
 * To install dependency packages, run `npm install`
 * To run the application for development purposes, run `npm run dev` or `nodemon`
 * To run it for production you may run `npm start`
@@ -23,7 +24,7 @@ NOTE: Running `npm start` will only run your application; it will not relaunch i
 === Setting up As a Microservice ===
 If you want to run the module as a containerize microservice, you'll need to install https://www.docker.com[Docker].
 
-* In order to use this as a microservice in your project, you'll need a MongoDB container with the name `mongo`. This is the name that should be resolved to the IP address of the mongoDB container. If you need to change that for any reason, you'll need to modify the `dbURL` parameter in `config/config.json`, accordingly.
+* In order to use this as a microservice in your project, you'll need a MongoDB container with the name `mongo`. This is the name that should be resolved to the IP address of the mongoDB container. If you need to change that for any reason, you'll need to provide the full URI through environment variable `DB` or modify the `dbURL` parameter in `config/config.json`, accordingly; it is suggested to choose the first option since you do not need to modify the container image.
 * Although the Dockerfile has been provided, you do not need to make your own copy of the image if you do not need to modify the source. The latest version for amd64 architecture is always built https://docs.docker.com/docker-hub/builds/[automatically] and pushed to the https://hub.docker.com/r/sayid/auth[DockerHub repository]. It is addressable with the `latest` tag `sayid/auth:latest`. Image for ARM architecture is built (not automatically, so sometimes it might be a little behind the latest commit) and is addressable with the `arm` tag `sayid/auth:arm`.
 * It is recommended to maintain your own copy of the image, if you want to freeze on a specific commit; since the aforementioned image is always updated to the latest commit. If you want to make your own copy of the image, clone it on the target platform and `cd` to the cloned repository. The run `docker build -t $DOCKER_ACC/$DOCKER_REPO:$IMG_TAG .`. You may push it to https://docs.docker.com/docker-hub/repos/[DockerHub] after building is complete.
 * If you are planning to use this microservice in a production environment, generate your own key pair, as mentioned above. After that, remember to create your own image, as well.

@@ -3,7 +3,11 @@ const logger = require('morgan');
 
 const config = require('./../config/config.json');
 const mongoose = require('mongoose');
-mongoose.connect(config.dbURL, {
+
+// check if db has been provided in environment variables
+const dbURI = (process.env.DB === undefined)? config.dbURL: process.env.DB;
+
+mongoose.connect(dbURI, {
     useCreateIndex: true,
     useNewUrlParser: true,
 }).catch(err => {
@@ -104,8 +108,8 @@ app.use((req, res, next) => {
 app.use((err, req, res) => {
     // set locals, only providing error in development
     res.locals.message = err.message;
-    res.locals.error = req.app.get('env') === 'development' ? err : {};
-    res.sendStatus(err.status || 500);
+    res.locals.error = req.app.get('ourEnvironment') === 'development' ? err : {};
+    res.status(err.status || 500).json({error: err});
 });
 
 // Create admin user if not already created
