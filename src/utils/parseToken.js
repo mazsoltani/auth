@@ -1,5 +1,5 @@
 const LoggedIn = require( '../models/loggedIn');
-const rm = require('../static/response_messages.json');
+const rm = require('../static/responseMessages');
 const jwt = require('../jwt/jwtService');
 
 module.exports.tokenResponse = async (token, res, next) => {
