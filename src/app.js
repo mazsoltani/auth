@@ -4,6 +4,7 @@ const logger = require('morgan');
 const config = require('../config/config');
 const errorMessages = require('./static/errorMessages');
 const mongoose = require('mongoose');
+const tokenResponse = require('./utils/parseToken').tokenResponse;
 
 // check if db has been provided in environment variables
 const dbURI = (process.env.DB === undefined)? config.dbURL: process.env.DB;
@@ -38,37 +39,6 @@ app.use(express.urlencoded({
 
 app.use('/auth/v1/', indexRouter);
 
-tokenResponse = async (token, res, next) => {
-    try {
-        let result = await LoggedIn.getRecordByToken(token);
-        if (!result) {
-            res.status(rm.notLoggedIn.code).json(rm.notLoggedIn.msg);
-            return false;
-        }
-        if (!validateToken(token)) {
-            res.status(rm.sessionInvalid.code).json(rm.sessionInvalid.msg);
-            return false;
-        }
-    } catch (err) {
-        next(err);
-        return false;
-    }
-    return true;
-}
-
-const validateToken = (token) => { // checks if the jwt has expired
-    const verifyOptions = {
-        issuer: jwt.fumServerIssuer,
-        audience: jwt.fumClientIssuer
-    };
-
-    const legit = jwt.verify(token, verifyOptions);
-    currentTime = new Date().getTime() / 1000 | 0;
-
-    if (currentTime > legit.iat && currentTime < legit.exp)
-        return true;
-    return false;
-}
 
 // middleware responsible for checking if token exists (in needed routes)
 // routers that do not require token should be declared before this middleware
