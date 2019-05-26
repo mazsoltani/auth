@@ -117,6 +117,7 @@ router.put('/changePassword', (req, res, next) => {
     const {
         email
     } = jwt.decode(token).payload;
+
     User.getUserByEmail(email, (err, user) => {
         if (err) {
             return next(err);
@@ -238,6 +239,51 @@ router.delete('/logout', (req, res, next) => {
             return next(err);
         }
         return res.status(rm.loggedOutSuccess.code).json(rm.loggedOutSuccess.msg);
+    });
+});
+
+router.delete('/delete', (req, res, next) => {
+    const {
+        error
+    } = Joi.validate(req.body, schemas.deleteUser);
+
+    if (error) {
+        return res.status(rm.invalidParameters.code).json(rm.invalidParameters.msg);
+    }
+
+    const token = req.get(sn.authorizationName).split(' ')[1]; // Extract the token from Bearer
+    const {
+        password
+    } = req.body;
+
+    const {
+        email
+    } = jwt.decode(token).payload;
+
+    User.getUserByEmail(email, (err, user) => {
+        if (err) {
+            return next(err);
+        }
+        if (!user) {
+            return res.status(rm.emailNotFound.code).json(rm.emailNotFound.msg);
+        }
+
+        User.comparePassword(password, user.password, (err) => {
+            if (err) {
+                return next(err);
+            }
+            if (!isMatched) {
+                return res.status(rm.invalidPassword.code).json(rm.invalidPassword.msg);
+            }
+
+            User.removeUserByEmail(email, (err, rec) => {
+                if (err || !rec) {
+                    return next(err);
+                }
+
+                return res.status(rm.userDeletedSuccess.code).json(rm.userDeletedSuccess.msg);
+            });
+        });
     });
 });
 

@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const config = require('../../config/config.json');
 const bcrypt = require('bcryptjs');
 const Joi = require('@hapi/joi');
 const sn = require('../static/names.json');
@@ -59,7 +58,7 @@ module.exports.getUsers = (callback) => {
 
 module.exports.getUserByEmail = (email, callback) => {
     const query = {
-        email: email
+        email
     };
 
     User.findOne(query, callback);
@@ -108,4 +107,12 @@ module.exports.changePassword = (email, newPassword, callback) => {
             });
         }
     });
+};
+
+module.exports.removeUserByEmail = (email, callback) => {
+    const query = {
+        email
+    };
+
+    User.deleteOne(query, callback);
 };

@@ -25,5 +25,8 @@ module.exports = {
     changeRole: Joi.object({
         email: emailValidation,
         role: roleValidation
+    }),
+    deleteUser: Joi.object({
+        password: passwordValidation
     })
 };
