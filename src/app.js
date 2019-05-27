@@ -76,11 +76,13 @@ app.use((req, res, next) => {
 });
 
 // error handler
-app.use((err, req, res) => {
-    // set locals, only providing error in development
-    res.locals.message = err.message;
-    res.locals.error = req.app.get('ourEnvironment') === 'development' ? err : {};
-    res.status(err.status || 500).json({error: err});
+app.use((err, req, res, next) => {
+    console.error(err);
+    // only providing error if debugging requested in header
+    if(req.get(authenticationEnv) === debug) {
+        return res.status(err.status || 500).send(err.stack);
+    }
+    return res.sendStatus(err.status || 500);
 });
 
 // Create admin user if not already created
