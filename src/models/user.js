@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const Joi = require('@hapi/joi');
+const schemas = require('../utils/validationSchema');
 const sn = require('../static/names');
 
 const UserSchema = mongoose.Schema({
@@ -9,27 +10,20 @@ const UserSchema = mongoose.Schema({
         index: true,
         required: true,
         unique: true,
-        lowercase: true,
-        validate: {
-            validator: function (value) {
-                const {
-                    error
-                } = Joi.validate(value, Joi.string().email({
-                    minDomainSegments: 2
-                }));
-                return error ? false : true;
-            }
-        }
+        lowercase: true
     },
     password: {
         type: String,
-        required: true
+        required: true,
     },
     role: {
         type: String,
         required: true,
-        enum: [sn.adminRole, sn.userRole, sn.guestRole],
         lowercase: true
+    },
+    verified: {
+        type: Boolean,
+        required: true
     }
 });
 
