@@ -1,8 +1,5 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const Joi = require('@hapi/joi');
-const schemas = require('../utils/validationSchema');
-const sn = require('../static/names');
 
 const UserSchema = mongoose.Schema({
     email: {
