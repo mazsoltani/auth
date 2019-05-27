@@ -206,21 +206,28 @@ router.put('/role', (req, res, next) => {
     } = req.body;
     const token = req.get(sn.authorizationName).split(' ')[1]; // Extract the token from Bearer
 
-    User.getUserByEmail(jwt.decode(token).payload.email).then((user) => { // get the user of token
-        if (!user) {
+    User.getUserByEmail(jwt.decode(token).payload.email).then((tokenUser) => { // get the user of token
+        if (!tokenUser) {
             return res.status(rm.emailNotFound.code).json(rm.emailNotFound.msg);
         }
-        if (user.role != sn.adminRole) { // check if the requester is actually an admin
+        if (tokenUser.role != sn.adminRole) { // check if the requester is actually an admin
             return res.status(rm.notAuthorized.code).json(rm.notAuthorized.msg);
         }
         if (role !== sn.adminRole && role !== sn.userRole && role !== sn.guestRole) {
             return res.status(rm.notAcceptableRole.code).json(rm.notAcceptableRole.msg);
         }
-        User.getUserByEmail(email).then((user) => { // get the user of email
-            if (user.email === sn.adminEmail) {
+        User.getUserByEmail(email).then((requestUser) => { // get the user of email
+            if (!requestUser) {
+                return res.status(rm.emailNotFound.code).json(rm.emailNotFound.msg);
+            }
+            if (requestUser.email === sn.adminEmail) {
                 return res.status(rm.primaryAdminChangeRoleFail.code).json(rm.primaryAdminChangeRoleFail.msg);
             }
-            User.updateRole(user, role, () => {
+            if (requestUser.role === role) {
+                return res.status(rm.roleNotChanged.code).json(rm.roleNotChanged.msg);
+            }
+
+            User.updateRole(requestUser, role, () => {
                 return res.status(rm.changeRoleSuccess.code).json(rm.changeRoleSuccess.msg);
             });
         }).catch((err) => {

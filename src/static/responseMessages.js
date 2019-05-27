@@ -95,6 +95,18 @@ module.exports = {
             message: "You must be an admin to set role!"
         }
     },
+    primaryAdminChangeRoleFail: {
+        code: 405,
+        msg: {
+            message: "Cannot change the role of the primary admin of the service!"
+        }
+    },
+    roleNotChanged: {
+        code:  200,
+        msg: {
+            message: "The requested role has already been set!"
+        }
+    },
     changeRoleSuccess: {
         code: 200,
         msg: {
@@ -117,12 +129,6 @@ module.exports = {
         code: 405,
         msg: {
             message: "Cannot delete the primary admin of the service!"
-        }
-    },
-    primaryAdminChangeRoleFail: {
-        code: 405,
-        msg: {
-            message: "Cannot change the role of the primary admin of the service!"
         }
     }
 };
