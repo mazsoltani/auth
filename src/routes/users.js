@@ -217,6 +217,9 @@ router.put('/role', (req, res, next) => {
             return res.status(rm.notAcceptableRole.code).json(rm.notAcceptableRole.msg);
         }
         User.getUserByEmail(email).then((user) => { // get the user of email
+            if (user.email === sn.adminEmail) {
+                return res.status(rm.primaryAdminChangeRoleFail.code).json(rm.primaryAdminChangeRoleFail.msg);
+            }
             User.updateRole(user, role, () => {
                 return res.status(rm.changeRoleSuccess.code).json(rm.changeRoleSuccess.msg);
             });
@@ -267,6 +270,9 @@ router.delete('/delete', (req, res, next) => {
             }
             if (!isMatched) {
                 return res.status(rm.invalidPassword.code).json(rm.invalidPassword.msg);
+            }
+            if (user.email === sn.adminEmail) {
+                return res.status(rm.primaryAdminDeleteFail.code).json(rm.primaryAdminDeleteFail.msg);
             }
 
             User.removeUserByEmail(email, (err, rec) => {

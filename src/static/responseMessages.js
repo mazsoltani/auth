@@ -112,5 +112,17 @@ module.exports = {
         msg: {
             message: "Successfully deleted user!"
         }
+    },
+    primaryAdminDeleteFail: {
+        code: 405,
+        msg: {
+            message: "Cannot delete the primary admin of the service!"
+        }
+    },
+    primaryAdminChangeRoleFail: {
+        code: 405,
+        msg: {
+            message: "Cannot change the role of the primary admin of the service!"
+        }
     }
 };
