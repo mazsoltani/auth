@@ -1,4 +1,5 @@
-const LoggedIn = require( '../models/loggedIn');
+const LoggedIn = require('../models/loggedIn');
+const User = require('./../models/user');
 const rm = require('../static/responseMessages');
 const jwt = require('../jwt/jwtService');
 
@@ -17,6 +18,19 @@ module.exports.tokenResponse = async (token, res, next) => {
         next(err);
         return false;
     }
+
+    try {
+        let user = await User.getUserByEmail(jwt.decode(token).payload.email); // check if user exist
+        if (!user) {
+            res.status(rm.sessionInvalid.code).json(rm.sessionInvalid.msg);
+            return false;
+        }
+
+    } catch (err) {
+        next(err);
+        return false;
+    }
+
     return true;
 }
 

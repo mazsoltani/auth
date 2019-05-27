@@ -9,10 +9,7 @@ module.exports.create = () => {
         role: staticNames.adminRole,
         verified: false
     });
-    User.getUserByEmail(adminUser.email, (err, user) => { // check to see if admin user exists
-        if (err) {
-            console.error(errorMessages.createAdminFailedError);
-        }
+    User.getUserByEmail(adminUser.email).then((user) => { // check to see if admin user exists
         if (!user) {
             User.createUser(adminUser, (err, user) => { // add admin user if doesn't already exist
                 if (err) {

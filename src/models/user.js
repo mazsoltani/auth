@@ -47,12 +47,12 @@ module.exports.getUsers = (callback) => {
     User.find(callback);
 };
 
-module.exports.getUserByEmail = (email, callback) => {
+module.exports.getUserByEmail = (email) => {
     const query = {
         email
     };
 
-    User.findOne(query, callback);
+    return User.findOne(query);
 };
 
 module.exports.comparePassword = (password, dbPassword, callback) => {
@@ -66,15 +66,9 @@ module.exports.comparePassword = (password, dbPassword, callback) => {
     });
 };
 
-module.exports.updateRole = (email, role, callback) => {
-    User.getUserByEmail(email, (err, user) => {
-        if (err) {
-            callback(err, null);
-        } else {
-            user.role = role;
-            user.save(callback);
-        }
-    });
+module.exports.updateRole = (user, role, callback) => {
+    user.role = role;
+    user.save(callback);
 };
 
 module.exports.changePassword = (user, newPassword, callback) => {

@@ -59,10 +59,7 @@ router.post('/login', (req, res, next) => {
         password
     } = req.body;
 
-    User.getUserByEmail(email, (err, user) => {
-        if (err) {
-            return next(err);
-        }
+    User.getUserByEmail(email).then((user) => {
         if (!user) {
             return res.status(rm.invalidUserPass.code).json(rm.invalidUserPass.msg);
         }
@@ -98,6 +95,8 @@ router.post('/login', (req, res, next) => {
                 return res.status(rm.loggedInSuccess.code).json(body);
             });
         });
+    }).catch((err) => {
+        return next(err);
     });
 });
 router.put('/changePassword', (req, res, next) => {
@@ -119,10 +118,7 @@ router.put('/changePassword', (req, res, next) => {
         email
     } = jwt.decode(token).payload;
 
-    User.getUserByEmail(email, (err, user) => {
-        if (err) {
-            return next(err);
-        }
+    User.getUserByEmail(email).then((user) => {
         if (!user) {
             return res.status(rm.emailNotFound.code).json(rm.emailNotFound.msg);
         }
@@ -143,6 +139,8 @@ router.put('/changePassword', (req, res, next) => {
                 return res.status(rm.changePasswordSuccess.code).json(rm.changePasswordSuccess.msg);
             });
         });
+    }).catch((err) => {
+        return next(err);
     });
 });
 
@@ -178,10 +176,7 @@ router.get('/list', (req, res, next) => {
 
 router.get('/role', (req, res, next) => {
     const token = req.get(sn.authorizationName).split(' ')[1]; // Extract the token from Bearer
-    User.getUserByEmail(jwt.decode(token).payload.email, (err, user) => {
-        if (err) {
-            return next(err);
-        }
+    User.getUserByEmail(jwt.decode(token).payload.email).then((user) => {
         if (!user) {
             return res.status(rm.emailNotFound.code).json(rm.emailNotFound.msg);
         }
@@ -191,6 +186,8 @@ router.get('/role', (req, res, next) => {
             [sn.role]: user.role
         };
         return res.status(rm.loggedIn.code).json(body);
+    }).catch((err) => {
+        return next(err);
     });
 });
 
@@ -209,27 +206,25 @@ router.put('/role', (req, res, next) => {
     } = req.body;
     const token = req.get(sn.authorizationName).split(' ')[1]; // Extract the token from Bearer
 
-    User.getUserByEmail(jwt.decode(token).payload.email, (err, user) => { // get email from jwt
-        if (err) {
-            return next(err);
-        }
+    User.getUserByEmail(jwt.decode(token).payload.email).then((user) => { // get the user of token
         if (!user) {
             return res.status(rm.emailNotFound.code).json(rm.emailNotFound.msg);
-        }
-        if (role !== sn.adminRole && role !== sn.userRole && role !== sn.guestRole) {
-            return res.status(rm.notAcceptableRole.code).json(rm.notAcceptableRole.msg);
         }
         if (user.role != sn.adminRole) { // check if the requester is actually an admin
             return res.status(rm.notAuthorized.code).json(rm.notAuthorized.msg);
         }
-
-        User.updateRole(email, role, (err) => {
-            if (err) {
-                return next(err);
-            }
-
-            return res.status(rm.changeRoleSuccess.code).json(rm.changeRoleSuccess.msg);
+        if (role !== sn.adminRole && role !== sn.userRole && role !== sn.guestRole) {
+            return res.status(rm.notAcceptableRole.code).json(rm.notAcceptableRole.msg);
+        }
+        User.getUserByEmail(email).then((user) => { // get the user of email
+            User.updateRole(user, role, () => {
+                return res.status(rm.changeRoleSuccess.code).json(rm.changeRoleSuccess.msg);
+            });
+        }).catch((err) => {
+            return next(err);
         });
+    }).catch((err) => {
+        return next(err);
     });
 });
 
@@ -261,10 +256,7 @@ router.delete('/delete', (req, res, next) => {
         email
     } = jwt.decode(token).payload;
 
-    User.getUserByEmail(email, (err, user) => {
-        if (err) {
-            return next(err);
-        }
+    User.getUserByEmail(email).then((user) => {
         if (!user) {
             return res.status(rm.emailNotFound.code).json(rm.emailNotFound.msg);
         }
@@ -285,6 +277,8 @@ router.delete('/delete', (req, res, next) => {
                 return res.status(rm.userDeletedSuccess.code).json(rm.userDeletedSuccess.msg);
             });
         });
+    }).catch((err) => {
+        return next(err);
     });
 });
 
