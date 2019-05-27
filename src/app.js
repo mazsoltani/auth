@@ -79,7 +79,7 @@ app.use((req, res, next) => {
 app.use((err, req, res, next) => {
     console.error(err);
     // only providing error if debugging requested in header
-    if(req.get(authenticationEnv) === debug) {
+    if(req.get(sn.authenticationEnv) === sn.debug) {
         return res.status(err.status || 500).send(err.stack);
     }
     return res.sendStatus(err.status || 500);
