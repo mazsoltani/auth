@@ -29,7 +29,8 @@ router.post('/register', (req, res, next) => {
     let newUser = new User({
         email: email,
         password: password,
-        role: sn.userRole
+        role: sn.userRole,
+        verified: false
     });
 
     User.createUser(newUser, (err, usr) => {
@@ -147,7 +148,7 @@ router.put('/changePassword', (req, res, next) => {
 
 router.get('/list', (req, res, next) => {
     const token = req.get(sn.authorizationName).split(' ')[1]; // Extract the token from Bearer
-    console.log(req.query);
+    // console.log(req.query);
     User.getUsers((err, result) => {
         if (err) {
             return next(err);
@@ -168,7 +169,7 @@ router.get('/list', (req, res, next) => {
 
             body.usersList.push(user);
             // var newList = Object.assign(JSON.stringify(newList), user);
-            console.log(body);
+            // console.log(body);
         });
 
         return res.status(rm.loggedIn.code).json(body);
